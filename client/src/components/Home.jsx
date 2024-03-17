@@ -4,16 +4,26 @@ import { Link } from 'react-router-dom';
 
 const Home = () => {
     const [blogs,setBlogs]=useState();
+    
+    const server_url=import.meta.env.VITE_URL;
 
     const fetchData=async()=>{
-        const res=await axios.get('http://localhost:5000/blogs')
-        setBlogs(res.data.data);
+        try {
+          const res=await axios.get(`${server_url}/blogs`)
+          if(res.status===200){
+            setBlogs(res.data.data);
+          }
+        } catch (error) {
+            console.log("all blogs error:",e)
+        }
     }
 
+
     useEffect(()=>{
-        fetchData();
+      fetchData();
+
     },[])
-    console.log(blogs)
+    // console.log(blogs)
   return (
     <div className='flex flex-col gap-10'>
         <nav className='w-full flex items-center justify-between px-[80px] py-4 text-white bg-slate-500'>
@@ -29,7 +39,7 @@ const Home = () => {
         <h1 className='text-center font-bold text-2xl'>All Blogs</h1>
         <div className='flex items-center gap-5 px-[80px] '>
       {
-        blogs?.map((item,i)=>(
+        blogs?.map((item)=>(
             <div key={item._id} className=' w-[300px]  text-center border-2 cursor-pointer rounded capitalize py-2'>
                 <p className='font-bold'>{item.title}</p>
                 <p>{item.sub_title}</p>
@@ -45,5 +55,6 @@ const Home = () => {
     </div>
   )
 }
+
 
 export default Home;

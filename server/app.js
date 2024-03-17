@@ -2,10 +2,13 @@ const express=require('express');
 const { databaseConnection } = require('./database/database');
 const blogModel = require('./model/blogModel');
 const cors=require('cors');
+
+require('dotenv').config()
 const app=express();
 
+//allowing client url to access the backend data
 app.use(cors({
-origin:'http://localhost:5173'
+origin:process.env.CLIENT_URL
 }));
 
 app.use(express.json())
@@ -16,31 +19,31 @@ app.use(express.urlencoded({extended:true}))
 databaseConnection();
 
 
-app.get('/',(req,res)=>{
-    res.status(200).json({
-        message:"success"
-    })
-})
 
 //create blog
 app.post('/createBlog',async(req,res)=>{
-    const {title,subTitle,des}=req.body;
+    try {
+        const {title,sub_title,description}=req.body;
 
-   await blogModel.create({
+         await blogModel.create({
         title:title,
-        sub_title:subTitle,
-        description:des
+        sub_title:sub_title,
+        description:description
     })
 
     res.status(201).json({
         message:"blog created successfully"
     })
+    } catch (error) {
+        console.log("createblog error:",e)
+        
+    }
 })
 
 //read blog(all blogs)
 app.get("/blogs",async(req,res)=>{
-    const blogs=await blogModel.find();
-    console.log(blogs)
+    try {
+        const blogs=await blogModel.find();
 
     if(blogs.length < 0){
         res.status(404).json({
@@ -52,6 +55,9 @@ app.get("/blogs",async(req,res)=>{
             message:"data fetched successfully",
             data:blogs
         })
+    }
+    } catch (error) {
+       console.log("read all blogs error:",e) 
     }
 })
 
@@ -80,12 +86,12 @@ else{
 //update blog
 app.patch('/blogs/:id',async(req,res)=>{
     const {id}=req.params;
-    const {title,subTitle,des}=req.body;
+    const {title,sub_title,description}=req.body;
     
     await blogModel.findByIdAndUpdate(id,{
         title:title,
-        sub_title:subTitle,
-        description:des
+        sub_title:sub_title,
+        description:description
     })
 
     res.status(200).json({
@@ -105,5 +111,5 @@ app.delete('/blogs/:id',async(req,res)=>{
 })
 
 app.listen(5000,()=>{
-    console.log("server started at port 5000")
+    console.log(`server started at port ${process.env.PORT}`)
 })

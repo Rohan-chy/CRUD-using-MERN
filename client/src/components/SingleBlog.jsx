@@ -5,12 +5,16 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 const singleDataBlog = () => {
     const {id}=useParams();
     const navigate=useNavigate();
+
+     // server localhost url
+     const server_url=import.meta.env.VITE_URL;
+
     const [singleData,setsingleData]=useState({})
 
 
     // read singleData blog
     const fetchsingleData=async()=>{
-        const res=await axios.get(`http://localhost:5000/blogs/${id}`);
+        const res=await axios.get(`${server_url}/blogs/${id}`);
 
         if(res.status===200){
             setsingleData(res.data.data);
@@ -24,7 +28,7 @@ const singleDataBlog = () => {
 
     // delete blog
     const deleteBlog=async()=>{
-        const res=await axios.delete(`http://localhost:5000/blogs/${id}`);
+        const res=await axios.delete(`${server_url}/blogs/${id}`);
 
         if(res.status===200){
             alert('deleted successfully')

@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 const CreateBlog = () => {
     const navigate=useNavigate();
 
+    // server localhost url
+    const server_url=import.meta.env.VITE_URL;
+
+
     //object to store the values of users
     const [blog,setBlog]=useState({
         title:'',
@@ -22,7 +26,7 @@ const CreateBlog = () => {
     const postBlog=async(e)=>{
         try{
             e.preventDefault();
-            const res=await axios.post('http://localhost:5000/createBlog',blog)
+            const res=await axios.post(`${server_url}/createBlog`,blog)
             if(res.status===201){
                 alert(res.data.message)
                 navigate('/')
